@@ -3,7 +3,6 @@ import heapq
 from os import curdir
 import time
 import math
-import GameState as gs
 import numpy as np
 from Node import *
 from Dictionary import *
@@ -70,21 +69,21 @@ def __bfs__(root_node):
             running_time = ending_time - starting_time
             print("solved")
             return current_node.state[0]
-        neighbour=neighbours(current_node.state)
-        for action , state in neighbour:
+        neighbour = neighbours(current_node.state)
+        for action, state in neighbour:
             found_frontier = False
             for st in frontier:
-                if np.array_equal(st.state[0],state[0]):
-                    found_frontier=True
+                if np.array_equal(st.state[0], state[0]):
+                    found_frontier = True
                     break
-            found_explored=False
+            found_explored = False
             if not found_frontier:
                 for st in explored:
-                    if np.array_equal(st.state[0],state[0]):
-                        found_explored=True
+                    if np.array_equal(st.state[0], state[0]):
+                        found_explored = True
                         break
                 if not found_frontier and not found_explored:
-                    child = Node(state,current_node,action)
+                    child = Node(state, current_node, action)
                     frontier.append(child)
        # expanded.add(current_node)
 
@@ -96,38 +95,38 @@ def __bfs__(root_node):
     
 
 def neighbours(state):
-    mat , (row, col) = state
+    mat, (row, col) = state
     results = []
     if row > 0:
         mat = np.copy(state[0])
         mat[row][col] = mat[row-1][col]
         mat[row-1][col] = 0
-        results.append(('up',[mat,(row-1,col)]))
+        results.append(('up', [mat, (row-1, col)]))
     if col > 0:
         mat = np.copy(state[0])
         mat[row][col] = mat[row][col-1]
         mat[row][col-1] = 0
-        results.append(('left',[mat,(row,col-1)]))
+        results.append(('left', [mat, (row, col-1)]))
     if row < 2:
         mat = np.copy(state[0])
         mat[row][col] = mat[row+1][col]
         mat[row+1][col] = 0
-        results.append(('down',[mat,(row+1,col)]))
+        results.append(('down', [mat, (row+1, col)]))
     if col < 2:
         mat = np.copy(state[0])
         mat[row][col] = mat[row][col+1]
         mat[row][col+1] = 0
-        results.append(('right',[mat,(row,col+1)]))
+        results.append(('right', [mat, (row, col+1)]))
     return results
+
 
 if __name__ == '__main__':
     matrix = generate_random_puzzle()
-    zero_index=0
-    for i in range (len(matrix)):
-        for j in range (len(matrix)):
-            if matrix[i][j]==0:
-                zero_index = (i,j)
+    zero_index = 0
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            if matrix[i][j] == 0:
+                zero_index = (i, j)
                 break
-    answer=__bfs__(Node([matrix , zero_index],parent=None,action=None))
-    print(answer
-    )
+    answer = __bfs__(Node([matrix, zero_index], parent=None, action=None))
+    print(answer)
