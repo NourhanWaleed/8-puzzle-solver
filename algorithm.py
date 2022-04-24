@@ -1,11 +1,6 @@
-from ast import Return
-import heapq
-from os import curdir
 import time
-import math
 import numpy as np
 from Node import *
-from Dictionary import *
 from queue import Queue
 
 # global variables
@@ -75,7 +70,7 @@ def __bfs__(root_node):
     explored = set()
     expanded = set()
     expanded.add(root_node)
-    while frontier:
+    while not frontier.empty():
         current_node = frontier.get()
         explored.add(current_node)
         if (current_node.state[0] == goal_state).all():     #same question as above
@@ -85,7 +80,7 @@ def __bfs__(root_node):
             print(f"running time: {running_time}")
             print("solved")
             return current_node
-        all_neighbours = neighbours(current_node.state)
+        all_neighbours = neighbours(current_node)
         for neighbour in all_neighbours:
             if neighbour not in expanded:
                 frontier.put(neighbour)
@@ -94,7 +89,7 @@ def __bfs__(root_node):
                 if maximum_depth > neighbour.depth:
                     maximum_depth = maximum_depth
                 else:
-                    maximum_depth = neighbour.depth   #same modification
+                    maximum_depth = neighbour.depth   # same modification
 
     '''for action, state in neighbour:
             found_frontier = False
@@ -123,62 +118,58 @@ def __bfs__(root_node):
 
 #functions for movements
 def down(state):
-    index = state.index('0')  #blank space
-    x = state
-    y = list(x)
-    y[index], y[index + 3] = y[index + 3], y[index]
-    x = "".join(y)
-    return int(x)
+    row, col = np.where(state[0] == 0)  #blank space
+    row, col = row[0], col[0]
+    state = np.copy(state)
+    state[0][row+1][col], state[0][row][col] = state[0][row][col], state[0][row+1][col]
+    return state
 
 
 def up(state):
-    index = state.index('0')  #blank space
-    x = state
-    y = list(x)
-    y[index], y[index - 3] = y[index - 3], y[index]
-    x = "".join(y)
-    return int(x)
+    row, col = np.where(state[0] == 0)  #blank space
+    row, col = row[0], col[0]
+    state = np.copy(state)
+    state[0][row-1][col], state[0][row][col] = state[0][row][col], state[0][row-1][col]
+    return state
 
 
 def right(state):
-    index = state.index('0')
-    x = state
-    y = list(x)
-    y[index], y[index + 1] = y[index + 1], y[index]
-    x = "".join(y)
-    return int(x)
+    row, col = np.where(state[0] == 0)  #blank space
+    row, col = row[0], col[0]
+    state = np.copy(state)
+    state[0][row][col+1], state[0][row][col] = state[0][row][col], state[0][row][col+1]
+    return state
 
 
 def left(state):
-    index = state.index('0')
-    x = state
-    y = list(x)
-    y[index], y[index - 1] = y[index - 1], y[index]
-    x = "".join(y)
-    return int(x)
+    row, col = np.where(state[0] == 0)  # blank space
+    row, col = row[0], col[0]
+    state = np.copy(state)
+    state[0][row][col - 1], state[0][row][col] = state[0][row][col], state[0][row][col - 1]
+    return state
 
 
 #still not done
-def neighbours(state):
-    state_string = state.__str__()
-    index = state_string.index("0")  #blank space index
-    row = int(index / 3)       #blank space row
-    col = index % 3       #blank space column
+def neighbours(node):
+    index = np.where(node.state[0] == 0)#blank space index
+    row, col = index
+    row, col = row[0], col[0]
     results = []
-    if row == 1:
-        results.append(Node(state, 'Down', down(state_string), state.depth + 1))
-        results.append(Node(state, 'Up', up(state_string), state.depth + 1))
-    elif row == 2:
-        results.append(Node(state, 'Up', up(state_string), state.depth + 1))
-    else:
-        results.append(Node(state, 'Down', down(state_string), state.depth + 1))
-    if col == 1:
-        results.append(Node(state, 'Left', left(state_string), state.depth + 1))
-        results.append(Node(state, 'Right', right(state_string), state.depth + 1))
-    elif col ==2:
-        results.append(Node(state, 'Left', left(state_string), state.depth + 1))
-    else:
-        results.append(Node(state, 'Right', right(state_string), state.depth + 1))
+    if row == 1:  # if middle row
+        results.append(Node(down(node.state), node, 'Down', node.depth + 1))
+        results.append(Node(up(node.state), node, 'Up', node.depth + 1))
+    elif row == 2: # if bottom row
+        results.append(Node(up(node.state), node, 'Up', node.depth + 1))
+    else:  # if top row
+        results.append(Node(down(node.state), node, 'Down', node.depth + 1))
+
+    if col == 1:  # if middle column
+        results.append(Node(left(node.state), node, 'Left',  node.depth + 1))
+        results.append(Node(right(node.state), node, 'Right', node.depth + 1))
+    elif col == 2:  # if last column
+        results.append(Node(left(node.state), node, 'Left', node.depth + 1))
+    else:  # if first column
+        results.append(Node(right(node.state), node, 'Right',  node.depth + 1))
     return results
 
 

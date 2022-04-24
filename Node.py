@@ -6,6 +6,12 @@ class Node:
         self.action = action
         self.depth = depth
         self.cost = cost + self.depth
+
+    def __hash__(self):
+        temp = list(self.state[0])
+        temp = tuple([tuple(x) for x in temp])
+        var  = hash(tuple(temp))
+        return var
 '''
     def __eq__(self, another):
         return self.state == another.state
