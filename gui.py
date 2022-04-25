@@ -2,19 +2,19 @@ import pygame
 import pygame_gui
 import algorithm as alg
 
-window_width = 1000
-window_height = 800
-tile_area_width = 600
-tile_area_height = 600
+window_width = 600
+window_height = 600
+tile_area_width = 300
+tile_area_height = 300
 tile_width = tile_area_width/3
 tile_height = tile_area_height/3
 button_area_width = window_width - tile_area_width
-button_width = 200
-button_height = 200
+button_width = 100
+button_height = 100
 button_margin = (button_area_width - button_width) // 2
 wait_time = 500
-horizontal_center = 300
-vertical_center = 300
+horizontal_center = 150
+vertical_center = 150
 background_colour = (102, 0, 102)  # purple
 tile_colour = (160, 160, 160)      # gray
 numbers_colour = (0, 0, 0)         # black
@@ -32,7 +32,6 @@ alert_label_event = pygame.USEREVENT + 2
 
 
 class Tile:
-
     def __init__(self, number, width, height, index_x, index_y):
         self.number = number
         self.x = 0
@@ -49,7 +48,6 @@ class Tile:
 # a rect object to store the information for Rects used to create buttons
 # with pygame_gui
 class ButtonRect:
-
     def __init__(self, id, ):
         self.Rect = pygame.Rect(
             (window_width - button_area_width + button_margin, id * button_height + 10),  # top,left
@@ -58,15 +56,16 @@ class ButtonRect:
 
 
 def alert_label(message):
-    alertLabel.set_text(message)              #error due to not importing pygame_gui
+    alertLabel.set_text(message)
     pygame.time.set_timer(alert_label_event, wait_time)
 
 
 def newState(state):
     # some random test state
     # state = m.GameState(None, None, m.random_game_state(), 0)
-    gameState = alg.Node(None, None, state, 0)
-    stateStr = str(gameState)
+    z_index = str(state).find('0')
+    gameState = alg.Node([str(state),z_index], None, "", 0)
+    stateStr = str(gameState.state[0])
 
     # for now for the purpose of initialization, this list will contain some tiles to draw
     initial_tiles_list = []
@@ -187,7 +186,7 @@ alertLabel = pygame_gui.elements.UILabel(
 # Option box to select which searching algorithm to visualize
 solveChoiceRect = ButtonRect(2)
 solveChoice = pygame_gui.elements.UIDropDownMenu(
-    ["BFS", "DFS", "A* Manhattan", "A* Euclid"], "BFS",
+    ["BFS", "DFS", "A* "], "BFS",
     relative_rect=solveChoiceRect.Rect, manager=manager)
 
 inputTextFieldRect = pygame.Rect(
@@ -206,7 +205,7 @@ confirmButton = pygame_gui.elements.UIButton(
 
 
 statusTextFieldRect = pygame.Rect(
-    (button_margin, window_height - 100),
+    (button_margin, window_height - 50),
     (button_height * 3.5, button_width * 20))
 statusTextField = pygame_gui.elements.UITextEntryLine(
     relative_rect=statusTextFieldRect, manager=manager)
@@ -230,7 +229,7 @@ while running:
     time_counter += time_delta * 1000
 
     if time_counter > 500 / speedSlider.get_current_value() and solutionExists:
-        updateBoard(solutionStepsList[solutionIndex].move)
+        updateBoard(solutionStepsList[solutionIndex].action)
         time_counter = 0
         solutionIndex += 1
         if solutionIndex == len(solutionStepsList):
@@ -265,7 +264,7 @@ while running:
                         path_to_goal = alg.path(answer)
                         status = alg.printing(answer, type_of_search)
                         solveButton.disable()
-                        if path_to_goal:
+                        if len(path_to_goal) > 1:
                             solutionExists = True
                             solutionIndex = 0
                             solutionStepsList = path_to_goal[1:]
@@ -273,7 +272,6 @@ while running:
                         else:
                             alert_label("No solution!")
                             solveButton.enable()
-
                         # print status in text field
                         statusTextField.text = status
                         statusTextField.focus()

@@ -20,7 +20,8 @@ matrix = 0
 def generate_random_puzzle():
     n = np.arange(9)
     np.random.shuffle(n)
-    return n
+    state_str= ''.join(str(i) for i in n)
+    return state_str
 
 
 def reset():
@@ -88,7 +89,7 @@ def bfs(root_node):
             running_time = ending_time - starting_time
             print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
             print("solved")
-            return current_node.state[0]
+            return current_node
         all_neighbours = neighbours(current_node)
         
         for neighbour in all_neighbours:
@@ -238,49 +239,7 @@ def a_star(root_node):
     return
 
 
-#functions for movements
-def down(state):
-    newstate=str(state[0])
-    newstate = list(newstate)
-    index = state[1]
-    newstate[index]=newstate[index+3]
-    newstate[index+3]=0
-    newstate =''.join(map(str,newstate))
 
-    return [newstate,index+3]
-
-
-def up(state):
-    newstate=str(state[0])
-    newstate = list(newstate)
-    index = state[1]
-    newstate[index]=newstate[index-3]
-    newstate[index-3]=0
-    newstate =''.join(map(str,newstate))
-    return [newstate,index-3]
-
-
-def right(state):
-    newstate=str(state[0])
-    newstate = list(newstate)
-    index = state[1]
-    newstate[index]=newstate[index+1]
-    newstate[index+1]=0
-    newstate =''.join(map(str,newstate))
-    return [newstate,index+1]
-
-
-def left(state):
-    newstate=str(state[0])
-    newstate = list(newstate)
-    index = state[1]
-    newstate[index]=newstate[index-1]
-    newstate[index-1]=0
-    newstate =''.join(map(str,newstate))
-    return [newstate,index-1]
-
-
-#still not done
 def neighbours(node):
     index = node.state[1]
     results = []
@@ -337,18 +296,59 @@ def left(state):
     return [newstate,index-1]
 
 
+def choose_algorithm(state,algorithm):
+    result = None
+    if algorithm == 'BFS':
+        result = bfs(state)
+    elif algorithm == 'DFS':
+        result = dfs(state)
+    elif 'A*' in algorithm:
+        result = a_star(state)
+    if found:
+        return result
+    else:
+        return None
 
+
+def path(state):
+    if state is not None:
+        paath = [state]
+        i = 0
+        while paath[i].parent:
+            paath.append(paath[i].parent)
+            i += 1
+        paath.reverse()
+        return paath
+    return False
+
+def printing(answer,algorithm):
+    print(algorithm + ":")
+    if answer is not None:
+        print(f"Cost of path: {answer.depth}")
+        print(f"Nodes expanded: {number_of_nodes_expanded}")
+        print(f"Search depth: {maximum_depth}")
+        print(f"Running time: {running_time}")
+        status = "Cost of path: " + str(answer.depth) + "   Nodes Expanded: " + str(number_of_nodes_expanded) + \
+                 "   Search depth: " + str(maximum_depth) + "   Running time: " + str(running_time)
+    else:
+        print("No solution exists")
+        print(f"Nodes expanded: {number_of_nodes_expanded}")
+        print(f"Search depth: {maximum_depth}")
+        print(f"Running time: {running_time}")
+        status = "No solution exists    Nodes Expanded: " + str(number_of_nodes_expanded) + \
+                 "   Search depth: " + str(maximum_depth) + "   Running time: " + str(running_time)
+    return status
 if __name__ == '__main__':
     matrix = generate_random_puzzle()
     matrix = np.array([[8, 6, 7], [2, 5, 4], [3, 0, 1]])
     #list = matrix.tolist()
     zero_index = 0
     matrix = ''.join(map(str,matrix))
-    matrix="876543210"
+    matrix="312045678"
     for i in range(len(matrix)):
         if matrix[i] == '0':
             zero_index = i
             break
-    answer = dfs(Node([matrix, zero_index], parent=None, action=None, depth=0))
+    answer = a_star(Node([matrix, zero_index], parent=None, action=None, depth=0))
 
     print(answer)
