@@ -1,3 +1,5 @@
+import heapq
+import math
 import time
 import numpy as np
 from Node import *
@@ -104,7 +106,7 @@ def bfs(root_node):
                 if maximum_depth > neighbour.depth:
                     maximum_depth = maximum_depth
                 else:
-                    maximum_depth = neighbour.depth   # same modificatio
+                    maximum_depth = neighbour.depth   # same modification
 
     found = False
     ending_time = time.time()
@@ -113,6 +115,73 @@ def bfs(root_node):
     print("not solved")
     return 
 
+
+
+def heuristic(node):
+    manhattan=0
+    euclidean=0
+    for i in range(len(node.state[0])):
+        for j in range(len(node.state[0])):
+            element=node.state[0][i][j]
+            row, col=np.where(node.state[0] == element)
+            row, col = row[0], col[0]
+            g_row,g_col=np.where(goal_state== element)
+            g_row, g_col= g_row[0],g_col[0]
+            distance= abs(g_row-row) + abs(g_col-col)
+            manhattan+=distance
+            distance = math.sqrt( ((g_row-row)**2)+((g_col-col)**2) )
+            euclidean+=distance
+    return manhattan,euclidean
+
+
+
+
+
+
+
+
+def a_star(root_node):
+    global running_time, found, maximum_depth, number_of_nodes_expanded
+    starting_time = time.time()
+    reset()
+    h,e = heuristic(root_node)
+    root_node.cost=root_node.depth+h
+    frontier = [root_node]
+    explored = set()
+    expanded = set()
+    expanded.add(root_node)
+    while frontier:
+        #heapq.heapify(frontier)
+        current_node = heapq.heappop(frontier)
+        explored.add(current_node)
+        if (current_node.state[0] == goal_state).all():     #same question as above
+            found = True
+            ending_time = time.time()
+            running_time = ending_time - starting_time
+            print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
+            print("solved")
+            return current_node
+        all_neighbours = neighbours(current_node)
+        for neighbour in all_neighbours:
+            h, e = heuristic(neighbour)
+            neighbour.cost=neighbour.depth+h
+            if neighbour not in frontier and neighbour not in expanded :
+                heapq.heappush(frontier,neighbour)
+               # heapq.heapify(frontier)
+                expanded.add(neighbour)
+                number_of_nodes_expanded += 1
+                if maximum_depth > neighbour.depth:
+                    maximum_depth = maximum_depth
+                else:
+                    maximum_depth = neighbour.depth   # same modificatio
+           # elif neighbour in frontier: #decrease key
+
+    found = False
+    ending_time = time.time()
+    running_time = ending_time - starting_time
+    print(f"running time: {running_time}")
+    print("not solved")
+    return
 
 #functions for movements
 def down(state):
@@ -181,5 +250,7 @@ if __name__ == '__main__':
             if matrix[i][j] == 0:
                 zero_index = (i, j)
                 break
-    answer = dfs(Node([matrix, zero_index], parent=None, action=None,depth=0))
+
+    answer = a_star(Node([matrix, zero_index], parent=None, action=None,depth=0))
+
     print(answer)

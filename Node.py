@@ -19,6 +19,9 @@ class Node:
         temp = list(self.state[0])
         temp = tuple([tuple(x) for x in temp])
         return hash(tuple(temp))
+
+    def __lt__(self, other):
+        return self.cost < other.cost
 '''
     def __eq__(self, another):
         return self.state == another.state
