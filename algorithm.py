@@ -14,7 +14,8 @@ found = False
 maximum_depth = 0
 matrix = 0
 
-#puzzle generator
+
+# puzzle generator
 def generate_random_puzzle():
     n = np.arange(9)
     np.random.shuffle(n)
@@ -30,7 +31,6 @@ def reset():
     maximum_depth = 0
 
 
-
 def has_duplicates(myset):
     mn = set()
     for x in myset:
@@ -38,8 +38,7 @@ def has_duplicates(myset):
         if h not in mn:
             mn.add(h)
         else:
-            print("THERE ARRREEE DUPLICATES")
-
+            print("THERE ARE DUPLICATES")
 
 
 def dfs(root_node):
@@ -53,13 +52,13 @@ def dfs(root_node):
     while len(frontier) > 0:
         current_node = frontier.pop()
         explored.add(current_node)
-        if (current_node.state[0] == goal_state).all():    #all?  why the yellow
+        if (current_node.state[0] == goal_state).all():
             found = True
             ending_time = time.time()
             running_time = ending_time - starting_time
             print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
             return current_node
-        allneighbours = neighbours(current_node)     #why the yellow
+        allneighbours = neighbours(current_node)
         # allneighbours.reverse()
         has_duplicates(expanded)
         for neighbour in allneighbours:
@@ -68,13 +67,13 @@ def dfs(root_node):
                 explored.add(neighbour)
                 number_of_nodes_expanded += 1
                 if maximum_depth > neighbour.depth:
-                    maximum_depth = maximum_depth   #listen to vn
+                    maximum_depth = maximum_depth
                 else:
-                    maximum_depth = neighbour.depth     #have to modify some class
+                    maximum_depth = neighbour.depth
     found = False
     ending_time = time.time()
     running_time = ending_time - starting_time
-    #print(f"running time: {running_time}")
+    # print(f"running time: {running_time}")
     return
 
 
@@ -90,7 +89,7 @@ def bfs(root_node):
     while not frontier.empty():
         current_node = frontier.get()
         explored.add(current_node)
-        if (current_node.state[0] == goal_state).all():     #same question as above
+        if (current_node.state[0] == goal_state).all():
             found = True
             ending_time = time.time()
             running_time = ending_time - starting_time
@@ -99,7 +98,7 @@ def bfs(root_node):
             return current_node
         all_neighbours = neighbours(current_node)
         for neighbour in all_neighbours:
-            if neighbour not in expanded :
+            if neighbour not in expanded:
                 frontier.put(neighbour)
                 expanded.add(neighbour)
                 number_of_nodes_expanded += 1
@@ -116,45 +115,38 @@ def bfs(root_node):
     return 
 
 
-
 def heuristic(node):
-    manhattan=0
-    euclidean=0
+    manhattan = 0
+    euclidean = 0
     for i in range(len(node.state[0])):
         for j in range(len(node.state[0])):
-            element=node.state[0][i][j]
-            row, col=np.where(node.state[0] == element)
+            element = node.state[0][i][j]
+            row, col = np.where(node.state[0] == element)
             row, col = row[0], col[0]
-            g_row,g_col=np.where(goal_state== element)
-            g_row, g_col= g_row[0],g_col[0]
-            distance= abs(g_row-row) + abs(g_col-col)
-            manhattan+=distance
-            distance = math.sqrt( ((g_row-row)**2)+((g_col-col)**2) )
-            euclidean+=distance
-    return manhattan,euclidean
-
-
-
-
-
-
+            g_row, g_col = np.where(goal_state == element)
+            g_row, g_col = g_row[0], g_col[0]
+            distance = abs(g_row-row) + abs(g_col-col)
+            manhattan += distance
+            distance = math.sqrt(((g_row-row)**2)+((g_col-col)**2))
+            euclidean += distance
+    return manhattan, euclidean
 
 
 def a_star(root_node):
     global running_time, found, maximum_depth, number_of_nodes_expanded
     starting_time = time.time()
     reset()
-    h,e = heuristic(root_node)
+    h, e = heuristic(root_node)
     root_node.cost=root_node.depth+h
     frontier = [root_node]
     explored = set()
     expanded = set()
     expanded.add(root_node)
     while frontier:
-        #heapq.heapify(frontier)
+        # heapq.heapify(frontier)
         current_node = heapq.heappop(frontier)
         explored.add(current_node)
-        if (current_node.state[0] == goal_state).all():     #same question as above
+        if (current_node.state[0] == goal_state).all():
             found = True
             ending_time = time.time()
             running_time = ending_time - starting_time
@@ -165,16 +157,20 @@ def a_star(root_node):
         for neighbour in all_neighbours:
             h, e = heuristic(neighbour)
             neighbour.cost=neighbour.depth+h
-            if neighbour not in frontier and neighbour not in expanded :
-                heapq.heappush(frontier,neighbour)
-               # heapq.heapify(frontier)
+            if neighbour not in frontier and neighbour not in expanded:
+                heapq.heappush(frontier, neighbour)
+                # heapq.heapify(frontier)
                 expanded.add(neighbour)
                 number_of_nodes_expanded += 1
                 if maximum_depth > neighbour.depth:
                     maximum_depth = maximum_depth
                 else:
-                    maximum_depth = neighbour.depth   # same modificatio
-           # elif neighbour in frontier: #decrease key
+                    maximum_depth = neighbour.depth
+            elif neighbour in frontier:  # decrease key
+                for i in frontier:
+                    if neighbour == i:
+                        if i.cost > neighbour.cost:
+                            i = neighbour
 
     found = False
     ending_time = time.time()
@@ -183,9 +179,10 @@ def a_star(root_node):
     print("not solved")
     return
 
-#functions for movements
+
+# functions for movements
 def down(state):
-    row, col = np.where(state[0] == 0)  #blank space
+    row, col = np.where(state[0] == 0)  # blank space
     row, col = row[0], col[0]
     state = deepcopy(state)
     state[0][row+1][col], state[0][row][col] = state[0][row][col], state[0][row+1][col]
@@ -193,7 +190,7 @@ def down(state):
 
 
 def up(state):
-    row, col = np.where(state[0] == 0)  #blank space
+    row, col = np.where(state[0] == 0)  # blank space
     row, col = row[0], col[0]
     state = deepcopy(state)
     state[0][row-1][col], state[0][row][col] = state[0][row][col], state[0][row-1][col]
@@ -201,7 +198,7 @@ def up(state):
 
 
 def right(state):
-    row, col = np.where(state[0] == 0)  #blank space
+    row, col = np.where(state[0] == 0)  # blank space
     row, col = row[0], col[0]
     state = deepcopy(state)
     state[0][row][col+1], state[0][row][col] = state[0][row][col], state[0][row][col+1]
@@ -216,9 +213,8 @@ def left(state):
     return state
 
 
-#still not done
 def neighbours(node):
-    index = np.where(node.state[0] == 0)#blank space index
+    index = np.where(node.state[0] == 0)     # blank space index
     row, col = index
     row, col = row[0], col[0]
     results = []
@@ -242,7 +238,7 @@ def neighbours(node):
 
 if __name__ == '__main__':
     matrix = generate_random_puzzle()
-    matrix = np.array( [[8,6,7],[2,5,4],[3,0,1]])
+    matrix = np.array([[8, 6, 7], [2, 5, 4], [3, 0, 1]])
     #list = matrix.tolist()
     zero_index = 0
     for i in range(len(matrix)):
@@ -251,6 +247,6 @@ if __name__ == '__main__':
                 zero_index = (i, j)
                 break
 
-    answer = a_star(Node([matrix, zero_index], parent=None, action=None,depth=0))
+    answer = a_star(Node([matrix, zero_index], parent=None, action=None, depth=0))
 
     print(answer)
