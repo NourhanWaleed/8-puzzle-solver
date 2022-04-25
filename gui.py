@@ -238,7 +238,7 @@ while running:
             # I added this to stop it from crashing when trying to solve
             # a shadow state: state on board an state actually stored are
             # not the same, so it attempts to do wrong moves
-            initialState, numbered_tiles_list, blankTile = newState(12345678)
+            initialState, numbered_tiles_list, blankTile = newState('012345678')
             solutionStepsList = []
 
         # check the event queue for events, such as quit or click

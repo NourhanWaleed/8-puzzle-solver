@@ -344,7 +344,7 @@ if __name__ == '__main__':
     #list = matrix.tolist()
     zero_index = 0
     matrix = ''.join(map(str,matrix))
-    matrix="312045678"
+    matrix="312045678" #876543210
     for i in range(len(matrix)):
         if matrix[i] == '0':
             zero_index = i
