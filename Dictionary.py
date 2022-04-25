@@ -1,5 +1,4 @@
 class Dictionary(dict):
-  
     # __init__ function
     def __init__(self):
         self = dict()
