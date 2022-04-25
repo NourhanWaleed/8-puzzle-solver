@@ -176,8 +176,6 @@ def a_star(root_node):
                 else:
                     maximum_depth = neighbour.depth   # same modification
            # elif neighbour in frontier: #decrease key
-
-
     found = False
     ending_time = time.time()
     running_time = ending_time - starting_time
@@ -241,7 +239,30 @@ def neighbours(node):
     if (index + 1) % 3 != 0:
         results.append(Node(right(node.state), node, 'Right', node.depth + 1))
     
-    return results
+# def neighbours(state):
+#     mat, (row, col) = state
+#     results = []
+#     if row > 0:
+#         mat = np.copy(state[0])
+#         mat[row][col] = mat[row-1][col]
+#         mat[row-1][col] = 0
+#         results.append(('up', [mat, (row-1, col)]))
+#     if col > 0:
+#         mat = np.copy(state[0])
+#         mat[row][col] = mat[row][col-1]
+#         mat[row][col-1] = 0
+#         results.append(('left', [mat, (row, col-1)]))
+#     if row < 2:
+#         mat = np.copy(state[0])
+#         mat[row][col] = mat[row+1][col]
+#         mat[row+1][col] = 0
+#         results.append(('down', [mat, (row+1, col)]))
+#     if col < 2:
+#         mat = np.copy(state[0])
+#         mat[row][col] = mat[row][col+1]
+#         mat[row][col+1] = 0
+#         results.append(('right', [mat, (row, col+1)]))
+#     return results
 
 
 if __name__ == '__main__':
@@ -250,9 +271,10 @@ if __name__ == '__main__':
     matrix = ''.join(map(str,matrix))
     matrix="876543210"
     for i in range(len(matrix)):
-        if matrix[i] == '0':
-            zero_index = i
-            break
+        for j in range(len(matrix)):
+            if matrix[i][j] == 0:
+                zero_index = (i, j)
+                break
     answer = bfs(Node([matrix, zero_index], parent=None, action=None,depth=0))
 
     print(answer)
