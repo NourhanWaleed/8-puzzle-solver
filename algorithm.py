@@ -176,14 +176,15 @@ def a_star(root_node):
     print(f"running time: {running_time}")
     print("not solved")
     return 
+
 '''
+
 
 def heuristic(node):
     manhattan = 0
     euclidean = 0
     for i in range(node.state_width()):
         for j in range(node.state_width()):
-            
             index = i*3 +j
             element = node.state[0][index]
             if element != '0':
@@ -195,6 +196,7 @@ def heuristic(node):
                 manhattan += distance
                 distance = math.sqrt(((g_row-row)**2)+((g_col-col)**2))
                 euclidean += distance
+
     return manhattan, euclidean
 
 
@@ -346,11 +348,13 @@ def printing(answer,algorithm):
     return status
 if __name__ == '__main__':
     matrix = generate_random_puzzle()
+
     #matrix = np.array([[8, 6, 7], [2, 5, 4], [3, 0, 1]])
     #list = matrix.tolist()
     zero_index = 0
     matrix = ''.join(map(str,matrix))
     matrix="876543210" #876543210
+
     for i in range(len(matrix)):
         if matrix[i] == '0':
             zero_index = i
