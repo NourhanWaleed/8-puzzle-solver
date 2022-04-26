@@ -38,36 +38,40 @@ def dfs(root_node):
     global running_time, found, maximum_depth, number_of_nodes_expanded
     starting_time = time.time()
     reset()
-    frontier = [root_node]
-    explored = set()
-    expanded = set()
-    expanded.add(root_node)
-    while len(frontier) > 0:
-        current_node = frontier.pop()
-        explored.add(current_node)
-        if current_node.state[0] == goal_state:
+    frontier = {}
+    frontier[root_node.state[0]]=root_node
+    explored = {}
+    
+    while len(frontier) != 0:
+        current_node = list(frontier.values())[-1]
+        frontier.pop(current_node.state[0])
+        explored[current_node.state[0]]=current_node
+        
+        if (current_node.state[0] == goal_state):     #same question as above
             found = True
             ending_time = time.time()
             running_time = ending_time - starting_time
             print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
+            print("solved")
             return current_node
+        all_neighbours = neighbours(current_node)
+        
+        for neighbour in all_neighbours:
 
-        allneighbours = neighbours(current_node)
-        # allneighbours.reverse()
-        for neighbour in allneighbours:
-            if neighbour not in expanded and neighbour not in explored:
-                frontier.append(neighbour)
-                explored.add(neighbour)
+            if frontier.get(neighbour.state[0]) is None and explored.get(neighbour.state[0]) is None:
+                frontier[neighbour.state[0]]=neighbour
                 number_of_nodes_expanded += 1
                 if maximum_depth > neighbour.depth:
                     maximum_depth = maximum_depth
                 else:
-                    maximum_depth = neighbour.depth
+                    maximum_depth = neighbour.depth   # same modification
+
     found = False
     ending_time = time.time()
     running_time = ending_time - starting_time
-    # print(f"running time: {running_time}")
-    return
+    print(f"running time: {running_time}")
+    print("not solved")
+    return 
 
 
 def bfs(root_node):
@@ -109,7 +113,7 @@ def bfs(root_node):
     print("not solved")
     return 
 
-
+'''
 def heuristic(node):
     manhattan=0
     euclidean=0
@@ -173,6 +177,8 @@ def a_star(root_node):
     print("not solved")
     return 
 
+'''
+
 
 def heuristic(node):
     manhattan = 0
@@ -181,14 +187,16 @@ def heuristic(node):
         for j in range(node.state_width()):
             index = i*3 +j
             element = node.state[0][index]
-            index = node.state[0].find(element)
-            row, col = index/3, index%3
-            g_index = goal_state.find(element)
-            g_row, g_col = g_index / 3, g_index % 3
-            distance = abs(g_row-row) + abs(g_col-col)
-            manhattan += distance
-            distance = math.sqrt(((g_row-row)**2)+((g_col-col)**2))
-            euclidean += distance
+            if element != '0':
+                index = node.state[0].find(element)
+                row, col = int(index/3), int(index)%3
+                g_index = goal_state.find(element)
+                g_row, g_col = int(g_index / 3), int(g_index) % 3
+                distance = abs(g_row-row) + abs(g_col-col)
+                manhattan += distance
+                distance = math.sqrt(((g_row-row)**2)+((g_col-col)**2))
+                euclidean += distance
+
     return manhattan, euclidean
 
 
@@ -217,7 +225,7 @@ def a_star(root_node):
         for neighbour in all_neighbours:
             h, e = heuristic(neighbour)
             neighbour.cost=neighbour.depth+h
-            if neighbour not in frontier and neighbour not in expanded:
+            if neighbour not in frontier and neighbour not in explored:
                 heapq.heappush(frontier, neighbour)
                 # heapq.heapify(frontier)
                 expanded.add(neighbour)
@@ -340,11 +348,13 @@ def printing(answer,algorithm):
     return status
 if __name__ == '__main__':
     matrix = generate_random_puzzle()
-    matrix = np.array([[8, 6, 7], [2, 5, 4], [3, 0, 1]])
+
+    #matrix = np.array([[8, 6, 7], [2, 5, 4], [3, 0, 1]])
     #list = matrix.tolist()
     zero_index = 0
     matrix = ''.join(map(str,matrix))
-    matrix="312045678" #876543210
+    matrix="876543210" #876543210
+
     for i in range(len(matrix)):
         if matrix[i] == '0':
             zero_index = i
