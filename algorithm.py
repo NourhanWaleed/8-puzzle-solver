@@ -200,7 +200,7 @@ def heuristic(node):
     return manhattan, euclidean
 
 
-def a_star(root_node):
+def a_star(root_node,heur):
     global running_time, found, maximum_depth, number_of_nodes_expanded
     starting_time = time.time()
     reset()
@@ -223,8 +223,11 @@ def a_star(root_node):
             return current_node
         all_neighbours = neighbours(current_node)
         for neighbour in all_neighbours:
-            h, e = heuristic(neighbour)
-            neighbour.cost=neighbour.depth+h
+            man, euc = heuristic(neighbour)
+            if heur == "m":
+                neighbour.cost = neighbour.depth + man
+            elif heur == "e":
+                neighbour.cost = neighbour.depth + euc
             if neighbour not in frontier and neighbour not in explored:
                 heapq.heappush(frontier, neighbour)
                 # heapq.heapify(frontier)
@@ -359,6 +362,6 @@ if __name__ == '__main__':
         if matrix[i] == '0':
             zero_index = i
             break
-    answer = a_star(Node([matrix, zero_index], parent=None, action=None, depth=0))
+    answer = a_star(Node([matrix, zero_index], parent=None, action=None, depth=0),"m")
 
     print(answer)
