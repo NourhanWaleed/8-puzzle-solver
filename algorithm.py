@@ -200,7 +200,7 @@ def heuristic(node):
     return manhattan, euclidean
 
 
-def a_star(root_node,heur):
+def a_star_algo(root_node,heur):
     global running_time, found, maximum_depth, number_of_nodes_expanded
     starting_time = time.time()
     reset()
@@ -248,6 +248,13 @@ def a_star(root_node,heur):
     print(f"running time: {running_time}")
     print("not solved")
     return
+
+
+def a_star_manhattan(root_node):
+    a_star_algo(root_node,"m")
+
+def a_star_euclidean(root_node):
+    a_star_algo(root_node,"e")
 
 
 
@@ -362,6 +369,7 @@ if __name__ == '__main__':
         if matrix[i] == '0':
             zero_index = i
             break
-    answer = a_star(Node([matrix, zero_index], parent=None, action=None, depth=0),"m")
+    answer = a_star_manhattan(Node([matrix, zero_index], parent=None, action=None, depth=0))
+    #answer = bfs(Node([matrix, zero_index], parent=None, action=None, depth=0))
 
     print(answer)
