@@ -7,18 +7,20 @@ class Node:
         self.depth = depth
         self.cost = cost + self.depth
 
+    @staticmethod
+    def state_width():
+        return 3
+
     def __str__(self):
         return f'{self.state[0]}'
 
     def __eq__(self, other):
         if not isinstance(other, Node):
             return False
-        return (self.state[0] == other.state[0]).all()
+        return self.state[0] == other.state[0]
 
     def __hash__(self):
-        temp = list(self.state[0])
-        temp = tuple([tuple(x) for x in temp])
-        return hash(tuple(temp))
+        return hash(self.state[0])
 
     def __lt__(self, other):
         return self.cost < other.cost
