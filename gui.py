@@ -208,9 +208,9 @@ confirmButton = pygame_gui.elements.UIButton(
 
 alertLabelRect  = pygame.Rect((0, window_height - 100),(button_width +500,button_height +10))
 statusTextField = pygame_gui.elements.UIButton(
-    relative_rect=alertLabelRect, manager=manager, text="nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"
+    relative_rect=alertLabelRect, manager=manager, text="nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn" #just debugging
 )
-statusTextField.set_text("BLA BLA BLA")
+statusTextField.set_text("Results")
 statusTextField.enable()
 
 initialState, numbered_tiles_list, blankTile = newState('876543210') #input state to solve
