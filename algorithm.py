@@ -295,26 +295,26 @@ def up(state):
 
 
 def right(state):
-    newstate=str(state[0])
+    newstate = str(state[0])
     newstate = list(newstate)
     index = state[1]
-    newstate[index]=newstate[index+1]
-    newstate[index+1]=0
-    newstate =''.join(map(str,newstate))
-    return [newstate,index+1]
+    newstate[index] = newstate[index+1]
+    newstate[index+1] = 0
+    newstate = ''.join(map(str, newstate))
+    return [newstate, index+1]
 
 
 def left(state):
-    newstate=str(state[0])
+    newstate = str(state[0])
     newstate = list(newstate)
     index = state[1]
-    newstate[index]=newstate[index-1]
-    newstate[index-1]=0
-    newstate =''.join(map(str,newstate))
-    return [newstate,index-1]
+    newstate[index] = newstate[index-1]
+    newstate[index-1] = 0
+    newstate = ''.join(map(str, newstate))
+    return [newstate, index-1]
 
 
-def choose_algorithm(state,algorithm):
+def choose_algorithm(state, algorithm):
     result = None
     if algorithm == 'BFS':
         result = bfs(state)
@@ -343,6 +343,7 @@ def path(state):
         return paath
     return False
 
+
 def printing(answer,algorithm):
     print(algorithm + ":")
     if answer is not None:
@@ -350,8 +351,8 @@ def printing(answer,algorithm):
         print(f"Nodes expanded: {number_of_nodes_expanded}")
         print(f"Search depth: {maximum_depth}")
         print(f"Running time: {running_time}")
-        status = "Cost of path: " + str(answer.depth) + "   Nodes Expanded: " + str(number_of_nodes_expanded) + \
-                 "   Search depth: " + str(maximum_depth) + "   Running time: " + str(running_time)
+        status = "Cost: " + str(answer.depth) + " Nodes Expanded: " + str(number_of_nodes_expanded) + \
+                 " Depth: " + str(maximum_depth) + " Running time: " + str(running_time)
     else:
         print("No solution exists")
         print(f"Nodes expanded: {number_of_nodes_expanded}")
