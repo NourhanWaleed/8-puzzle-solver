@@ -258,16 +258,18 @@ while running:
                     if initialState.state != alg.goal_state:
                         type_of_search = solveChoice.selected_option
                         answer = alg.choose_algorithm(initialState, type_of_search)
-                        path_to_goal = alg.path(answer)
-                        status = alg.printing(answer, type_of_search)
-                        solveButton.disable()
-                        if len(path_to_goal) > 1:
-                            solutionExists = True
-                            solutionIndex = 0
-                            solutionStepsList = path_to_goal[1:]
-                            alert_label("Solving...")
+                        if answer:
+                            path_to_goal = alg.path(answer)
+                            status = alg.printing(answer, type_of_search)
+                            solveButton.disable()
+                            if len(path_to_goal) > 1:
+                                solutionExists = True
+                                solutionIndex = 0
+                                solutionStepsList = path_to_goal[1:]
+                                alert_label("Solving...")
                         else:
                             alert_label("No solution!")
+                            status = "Not Solvable try again :("
                             solveButton.enable()
                         # print status in text field
                         statusTextField.set_text(status) 

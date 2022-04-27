@@ -31,6 +31,22 @@ def reset():
     found = False
     maximum_depth = 0
 
+def getInvCount(arr):
+    inv_count = 0
+    empty_value = 0
+    arr = str(arr)
+    for i in range(0, 9):
+        for j in range(i + 1, 9):
+            if arr[j] != empty_value and arr[i] != empty_value and arr[i] > arr[j]:
+                inv_count += 1
+    return inv_count
+def isSolvable(puzzle) :
+ 
+    # Count inversions in given 8 puzzle
+    inv_count = getInvCount(puzzle)
+ 
+    # return true if inversion count is even.
+    return (inv_count % 2 == 0)
 
 
 
@@ -41,7 +57,6 @@ def dfs(root_node):
     frontier = {}
     frontier[root_node.state[0]]=root_node
     explored = {}
-    
     while len(frontier) != 0:
         current_node = list(frontier.values())[-1]
         frontier.pop(current_node.state[0])
@@ -316,14 +331,15 @@ def left(state):
 
 def choose_algorithm(state, algorithm):
     result = None
-    if algorithm == 'BFS':
-        result = bfs(state)
-    elif algorithm == 'DFS':
-        result = dfs(state)
-    elif 'A* Manhat' in algorithm:
-        result = a_star_manhattan(state)
-    elif 'A* Euclid' in algorithm:
-        result = a_star_euclidean(state)
+    if isSolvable(state):
+        if algorithm == 'BFS':
+            result = bfs(state)
+        elif algorithm == 'DFS':
+            result = dfs(state)
+        elif 'A* Manhat' in algorithm:
+            result = a_star_manhattan(state)
+        elif 'A* Euclid' in algorithm:
+            result = a_star_euclidean(state)
     
     if found:
         return result
@@ -369,7 +385,6 @@ if __name__ == '__main__':
     zero_index = 0
     matrix = ''.join(map(str,matrix))
     matrix="876543210" #876543210
-
     for i in range(len(matrix)):
         if matrix[i] == '0':
             zero_index = i
