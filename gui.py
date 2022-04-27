@@ -1,3 +1,4 @@
+from time import time
 import pygame
 import pygame_gui
 import algorithm as alg
@@ -73,7 +74,7 @@ def newState(state):
     # the tile that will be left blank - represented by 0
     # initialized to silence warning
     blankTileLocal = Tile("0", tile_width - 2, tile_height - 2, 0, 0)
-
+    print(stateStr)
     # num is a string
     for i, num in enumerate(stateStr):
 
@@ -159,34 +160,34 @@ def swapTiles(mousePosition):
         elif blankTile.index_x > index_x:
             updateBoard("Up")
 
-
-randomStateButtonRect = ButtonRect(1)
+'''
+randomStateButtonRect = ButtonRect(3)
 randomStateButton = pygame_gui.elements.UIButton(
     relative_rect=randomStateButtonRect.Rect, text="Random Start", manager=manager
 )
-
+randomStateButton.disable()'''
 # Clicking this button should go through the steps required to solve the puzzle
-solveButtonRect = ButtonRect(3)
+solveButtonRect = ButtonRect(2)
 solveButton = pygame_gui.elements.UIButton(
     relative_rect=solveButtonRect.Rect, text="Solve", manager=manager
 )
 
 # slider to control speed of animation
-speedSliderRect = ButtonRect(4)
+speedSliderRect = ButtonRect(3)
 speedSlider = pygame_gui.elements.UIHorizontalSlider(
     relative_rect=speedSliderRect.Rect, start_value=1, value_range=(1, 100),
     manager=manager
 )
 
-alertLabelRect = ButtonRect(5)
+alertLabelRect = ButtonRect(4)
 alertLabel = pygame_gui.elements.UILabel(
-    relative_rect=alertLabelRect.Rect, manager=manager, text="Click Solve to solve!"
+    relative_rect=alertLabelRect.Rect, manager=manager, text="Click Solve"
 )
 
 # Option box to select which searching algorithm to visualize
-solveChoiceRect = ButtonRect(2)
+solveChoiceRect = ButtonRect(1)
 solveChoice = pygame_gui.elements.UIDropDownMenu(
-    ["BFS", "DFS", "A* "], "BFS",
+    ["BFS", "DFS", "A* Manhat", "A* Euclid"], "BFS",
     relative_rect=solveChoiceRect.Rect, manager=manager)
 
 inputTextFieldRect = pygame.Rect(
@@ -209,9 +210,8 @@ statusTextFieldRect = pygame.Rect(
     (button_height * 3.5, button_width * 20))
 statusTextField = pygame_gui.elements.UITextEntryLine(
     relative_rect=statusTextFieldRect, manager=manager)
-statusTextField.disable()
-
-initialState, numbered_tiles_list, blankTile = newState(12345678)
+statusTextField.enable()
+initialState, numbered_tiles_list, blankTile = newState('876543210') #input state to solve
 
 solutionExists = False
 
@@ -252,12 +252,13 @@ while running:
         # specific to the UI library. all events related to pygame_gui go here
         if event.type == pygame.USEREVENT:
             if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                if event.ui_element == randomStateButton:
+                ''' if event.ui_element == randomStateButton:
                     state = alg.generate_random_puzzle()
                     initialState, numbered_tiles_list, blankTile = newState(state)
                     solveButton.enable()
                     solutionExists = False
-                elif event.ui_element == solveButton:
+                '''
+                if event.ui_element == solveButton:
                     if initialState.state != alg.goal_state:
                         type_of_search = solveChoice.selected_option
                         answer = alg.choose_algorithm(initialState, type_of_search)
@@ -273,8 +274,9 @@ while running:
                             alert_label("No solution!")
                             solveButton.enable()
                         # print status in text field
-                        statusTextField.text = status
+                        statusTextField.set_text(status) 
                         statusTextField.focus()
+                        
                     else:
                         alert_label("Already solved")
 

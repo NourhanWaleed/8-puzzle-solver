@@ -71,7 +71,7 @@ def dfs(root_node):
     running_time = ending_time - starting_time
     print(f"running time: {running_time}")
     print("not solved")
-    return 
+    return None
 
 
 def bfs(root_node):
@@ -111,7 +111,7 @@ def bfs(root_node):
     running_time = ending_time - starting_time
     print(f"running time: {running_time}")
     print("not solved")
-    return 
+    return None
 
 '''
 def heuristic(node):
@@ -220,7 +220,7 @@ def a_star_algo(root_node,heur):
             running_time = ending_time - starting_time
             print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
             print("solved")
-            return current_node
+            return current_node 
         all_neighbours = neighbours(current_node)
         for neighbour in all_neighbours:
             man, euc = heuristic(neighbour)
@@ -247,14 +247,14 @@ def a_star_algo(root_node,heur):
     running_time = ending_time - starting_time
     print(f"running time: {running_time}")
     print("not solved")
-    return
+    return None
 
 
 def a_star_manhattan(root_node):
-    a_star_algo(root_node,"m")
+    return a_star_algo(root_node,"m")
 
 def a_star_euclidean(root_node):
-    a_star_algo(root_node,"e")
+    return a_star_algo(root_node,"e")
 
 
 
@@ -320,12 +320,16 @@ def choose_algorithm(state,algorithm):
         result = bfs(state)
     elif algorithm == 'DFS':
         result = dfs(state)
-    elif 'A*' in algorithm:
-        result = a_star(state)
+    elif 'A* Manhat' in algorithm:
+        result = a_star_manhattan(state)
+    elif 'A* Euclid' in algorithm:
+        result = a_star_euclidean(state)
+    
     if found:
         return result
     else:
         return None
+    
 
 
 def path(state):
