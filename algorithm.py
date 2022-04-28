@@ -37,7 +37,7 @@ def getInvCount(arr):
     arr = str(arr)
     for i in range(0, 9):
         for j in range(i + 1, 9):
-            if arr[j] != empty_value and arr[i] != empty_value and arr[i] > arr[j]:
+            if int(arr[j]) != empty_value and int(arr[i]) != empty_value and int(arr[i]) > int(arr[j]):
                 inv_count += 1
     return inv_count
 def isSolvable(puzzle) :
@@ -53,33 +53,32 @@ def isSolvable(puzzle) :
 def dfs(root_node):
     global running_time, found, maximum_depth, number_of_nodes_expanded
     starting_time = time.time()
-    reset()
-    frontier = {}
+    reset() # intialize variables with corresponding value
+    frontier = {} 
     frontier[root_node.state[0]]=root_node
     explored = {}
 
     while len(frontier) != 0:
         
-        current_node=frontier.popitem()
-        explored[current_node[0]]=current_node[1]
+        current_node=frontier.popitem() # pop last item from dictionary
+        explored[current_node[0]]=current_node[1] # visit the current node
         
-        if (current_node[0] == goal_state):     #same question as above
+        if (current_node[0] == goal_state):     # check if the state is equivelent to goal state "012345678"
             found = True
-            ending_time = time.time()
-            running_time = ending_time - starting_time
+            ending_time = time.time() # read time now
+            running_time = ending_time - starting_time # calculate time of algorithm
             print(f'Time: {running_time} Cost: {current_node[1].depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
             print("solved")
             return current_node[1]
-        all_neighbours = neighbours(current_node[1])
+        all_neighbours = neighbours(current_node[1]) # get neighbours of the current state
         
         for neighbour in all_neighbours:
 
-            if frontier.get(neighbour.state[0]) is None and explored.get(neighbour.state[0]) is None:
-                frontier[neighbour.state[0]]=neighbour
-                current_node = neighbour
-                number_of_nodes_expanded += 1
-                if maximum_depth > neighbour.depth:
-                    maximum_depth = maximum_depth
+            if frontier.get(neighbour.state[0]) is None and explored.get(neighbour.state[0]) is None: # check if current node not in frontier or in explored
+                frontier[neighbour.state[0]]=neighbour # insert in frontier
+                number_of_nodes_expanded += 1 # increase number of expanded nodes
+                if maximum_depth > neighbour.depth: 
+                    maximum_depth = maximum_depth 
                 else:
                     maximum_depth = neighbour.depth   # same modification
 
@@ -94,30 +93,30 @@ def dfs(root_node):
 def bfs(root_node):
     global running_time, found, maximum_depth, number_of_nodes_expanded
     starting_time = time.time()
-    reset()
+    reset() # intialize variables with corresponding value
     frontier = {}
     frontier[root_node.state[0]]=root_node
     explored = {}
     while len(frontier) != 0:
-        current_node = next(iter(frontier))
-        current_node = frontier.get(current_node)
-        explored[current_node.state[0]]=current_node
+        current_node = next(iter(frontier)) # get first item from dictionary
+        current_node = frontier.get(current_node) #get node
+        explored[current_node.state[0]]=current_node # visit the current node
         
-        frontier.pop(current_node.state[0])
-        if (current_node.state[0] == goal_state):     #same question as above
+        frontier.pop(current_node.state[0]) #pop first item from dictionary
+        if (current_node.state[0] == goal_state):    # check if the state is equivelent to goal state "012345678"
             found = True
-            ending_time = time.time()
-            running_time = ending_time - starting_time
+            ending_time = time.time() # read time now
+            running_time = ending_time - starting_time # calculate time of algorithm
             print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
             print("solved")
             return current_node
-        all_neighbours = neighbours(current_node)
+        all_neighbours = neighbours(current_node) # get neighbours of the current state
         
         for neighbour in all_neighbours:
 
-            if frontier.get(neighbour.state[0]) is None and explored.get(neighbour.state[0]) is None:
-                frontier[neighbour.state[0]]=neighbour
-                number_of_nodes_expanded += 1
+            if frontier.get(neighbour.state[0]) is None and explored.get(neighbour.state[0]) is None: # check if current node not in frontier or in explored
+                frontier[neighbour.state[0]]=neighbour # insert in frontier
+                number_of_nodes_expanded += 1 # increase number of expanded nodes
                 if maximum_depth > neighbour.depth:
                     maximum_depth = maximum_depth
                 else:
