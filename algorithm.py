@@ -57,24 +57,26 @@ def dfs(root_node):
     frontier = {}
     frontier[root_node.state[0]]=root_node
     explored = {}
+
     while len(frontier) != 0:
-        current_node = list(frontier.values())[-1]
-        frontier.pop(current_node.state[0])
-        explored[current_node.state[0]]=current_node
         
-        if (current_node.state[0] == goal_state):     #same question as above
+        current_node=frontier.popitem()
+        explored[current_node[0]]=current_node[1]
+        
+        if (current_node[0] == goal_state):     #same question as above
             found = True
             ending_time = time.time()
             running_time = ending_time - starting_time
-            print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
+            print(f'Time: {running_time} Cost: {current_node[1].depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
             print("solved")
-            return current_node
-        all_neighbours = neighbours(current_node)
+            return current_node[1]
+        all_neighbours = neighbours(current_node[1])
         
         for neighbour in all_neighbours:
 
             if frontier.get(neighbour.state[0]) is None and explored.get(neighbour.state[0]) is None:
                 frontier[neighbour.state[0]]=neighbour
+                current_node = neighbour
                 number_of_nodes_expanded += 1
                 if maximum_depth > neighbour.depth:
                     maximum_depth = maximum_depth
@@ -96,12 +98,12 @@ def bfs(root_node):
     frontier = {}
     frontier[root_node.state[0]]=root_node
     explored = {}
-    
     while len(frontier) != 0:
-        current_node = list(frontier.values())[0]
-        frontier.pop(current_node.state[0])
+        current_node = next(iter(frontier))
+        current_node = frontier.get(current_node)
         explored[current_node.state[0]]=current_node
         
+        frontier.pop(current_node.state[0])
         if (current_node.state[0] == goal_state):     #same question as above
             found = True
             ending_time = time.time()
