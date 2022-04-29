@@ -205,12 +205,12 @@ def heuristic(node):
             element = node.state[0][index]
             if element != '0':
                 index = node.state[0].find(element)
-                row, col = int(index/3), int(index)%3
+                row, col = int(index/3), int(index)%3   #find row and column index of current element
                 g_index = goal_state.find(element)
-                g_row, g_col = int(g_index / 3), int(g_index) % 3
-                distance = abs(g_row-row) + abs(g_col-col)
+                g_row, g_col = int(g_index / 3), int(g_index) % 3   #find row and column index of the goal position of the current element
+                distance = abs(g_row-row) + abs(g_col-col)   #calculate the required steps to reach the goal using manhattan heuristic
                 manhattan += distance
-                distance = math.sqrt(((g_row-row)**2)+((g_col-col)**2))
+                distance = math.sqrt(((g_row-row)**2)+((g_col-col)**2))  #calculate the straight line distance from current element to goal position using euclidean formula
                 euclidean += distance
 
     return manhattan, euclidean
@@ -220,26 +220,29 @@ def a_star_algo(root_node,heur):
     global running_time, found, maximum_depth, number_of_nodes_expanded
     starting_time = time.time()
     reset()
-    h, e = heuristic(root_node)
-    root_node.cost=root_node.depth+h
-    frontier = [root_node]
-    explored = set()
-    expanded = set()
+    h, e = heuristic(root_node)    #calculating heuristic for initial state
+    if heur == "m":
+        root_node.cost=root_node.depth+h
+    elif heur == "e":
+        root_node.cost = root_node.depth + e
+    frontier = [root_node]      #frontier list
+    explored = set()            #explored list
+    expanded = set()            #expanded list
     expanded.add(root_node)
     while frontier:
         #heapq.heapify(frontier)
-        current_node = heapq.heappop(frontier)
-        explored.add(current_node)
-        if current_node.state[0] == goal_state:     #same question as above
+        current_node = heapq.heappop(frontier)    #pop element with least f(n) from frontier
+        explored.add(current_node)               # add to explored list
+        if current_node.state[0] == goal_state:     #check if we reached the goal state
             found = True
             ending_time = time.time()
             running_time = ending_time - starting_time
             print(f'Time: {running_time} Cost: {current_node.depth} Max Depth: {maximum_depth} Nodes Expanded :{len(explored)}')
             print("solved")
             return current_node 
-        all_neighbours = neighbours(current_node)
+        all_neighbours = neighbours(current_node)   #get neighbours, children, of current state
         for neighbour in all_neighbours:
-            man, euc = heuristic(neighbour)
+            man, euc = heuristic(neighbour)          #calculate heauristic for children
             if heur == "m":
                 neighbour.cost = neighbour.depth + man
             elif heur == "e":
@@ -252,8 +255,8 @@ def a_star_algo(root_node,heur):
                 if maximum_depth > neighbour.depth:
                     maximum_depth = maximum_depth
                 else:
-                    maximum_depth = neighbour.depth   # same modification
-            elif neighbour in frontier:  # decrease key
+                    maximum_depth = neighbour.depth
+            elif neighbour in frontier:  # if the heuristic of the state is less than the original heuristic we decrease it
                 for i in frontier:
                     if neighbour == i:
                         if i.cost > neighbour.cost:
